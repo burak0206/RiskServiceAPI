@@ -1,15 +1,28 @@
+
 class LogRow:
-    def __init__(self, date, time, vm_name, vm_id, log_message,):
+    def __init__(self, date, time, vm_name, vm_id, log_message):
         self.date = date
         self.time = time
         self.vm_name = vm_name
         self.vm_id = vm_id
         self.log_message = log_message
 
-
 class LogBlock:
-    def __init__(self, log_rows):
-        self.log_rows = log_rows
+    def __init__(self,vm_name,vm_id):
+        self.vm_name = vm_name
+        self.vm_id = vm_id
+        self.user = ""
+        self.ip = ""
+        self.client_id = ""
+        self.log_rows = []
+        self.number_of_success_login = 0;
+        self.number_of_failed_login = 0;
 
     def add_log_rows(self, log_row):
         self.log_rows.append(log_row)
+
+    def post_complete_log_block(self):
+        print(self.client_id)
+
+
+

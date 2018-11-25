@@ -5,6 +5,8 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import datetime
 
+from RiskServiceApp.services import LogService
+
 def index(request):
     response = json.dumps([{}])
     return HttpResponse(response, content_type='text/json')
@@ -87,8 +89,8 @@ def get_failed_login_count_lastweek(request):
 def log(request):
     if request.method == 'POST' and request.FILES['logfile']:
         logfile = request.FILES['logfile']
-        for line in logfile:
-            line_str = line.decode("utf-8").strip()
-            print(line_str)
+        log_service = LogService();
+        log_service.populate_log(logfile)
+        log_service.print_logs()
         response = json.dumps([{'Success': "Risk Values are changed"}])
     return HttpResponse(response, content_type='text/json')

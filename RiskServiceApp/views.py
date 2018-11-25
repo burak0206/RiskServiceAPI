@@ -1,6 +1,9 @@
 from django.http import HttpResponse
+from django.core.serializers.json import DjangoJSONEncoder
+from django.views.decorators.csrf import csrf_exempt
 
 import json
+import datetime
 
 def index(request):
     response = json.dumps([{}])
@@ -57,8 +60,8 @@ def is_ip_internal(request):
 def get_last_successful_login_date(request):
     if request.method == 'GET':
         try:
-
-            response = json.dumps([{ 'count': 4}])
+            date_time = datetime.datetime.now()
+            response = json.dumps([{'datetime': date_time}], cls=DjangoJSONEncoder)
         except:
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
@@ -66,8 +69,8 @@ def get_last_successful_login_date(request):
 def get_last_failed_login_date(request):
     if request.method == 'GET':
         try:
-
-            response = json.dumps([{ 'count': 4}])
+            date_time = datetime.datetime.now()
+            response = json.dumps([{'datetime': date_time}], cls=DjangoJSONEncoder)
         except:
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
@@ -75,8 +78,17 @@ def get_last_failed_login_date(request):
 def get_failed_login_count_lastweek(request):
     if request.method == 'GET':
         try:
-
             response = json.dumps([{ 'count': 4}])
         except:
             response = json.dumps([{ 'Error': 'No person with that name'}])
+    return HttpResponse(response, content_type='text/json')
+
+@csrf_exempt
+def log(request):
+    if request.method == 'POST' and request.FILES['logfile']:
+        logfile = request.FILES['logfile']
+        for line in logfile:
+            line_str = line.decode("utf-8").strip()
+            print(line_str)
+        response = json.dumps([{'Success': "Risk Values are changed"}])
     return HttpResponse(response, content_type='text/json')

@@ -15,17 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from RiskServiceApp import controller
+from RiskServiceApp import controllers
 
 urlpatterns = [
     #path('admin/', admin.site.urls),
-    path('', controller.index),
-    path('log', controller.log),
-    path('risk/isuserknown', controller.is_user_known),
-    path('risk/isclientknown', controller.is_client_known),
-    path('risk/isipknown', controller.is_ip_known),
-    path('risk/isipinternal', controller.is_ip_internal),
-    path('risk/lastsuccessfullogindate', controller.get_last_successful_login_date),
-    path('risk/lastfailedlogindate', controller.get_last_failed_login_date),
-    path('risk/failedlogincountlastweek', controller.get_failed_login_count_lastweek),
+    path('', controllers.index),
+    path('log', controllers.log),
+    path('risk/isuserknown', controllers.is_user_known),
+    path('risk/isclientknown', controllers.is_client_known),
+    path('risk/isipknown', controllers.is_ip_known),
+    path('risk/isipinternal', controllers.is_ip_internal),
+    path('risk/lastsuccessfullogindate', controllers.get_last_successful_login_date),
+    path('risk/lastfailedlogindate', controllers.get_last_failed_login_date),
+    path('risk/failedlogincountlastweek', controllers.get_failed_login_count_lastweek),
 ]

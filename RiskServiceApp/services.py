@@ -39,16 +39,15 @@ class LogService:
             first_index = first_index + len(vm_name) + 1
             first_index = first_index + len(vm_id) + 1
             log_message  = line_str[first_index:len(line_str)];
-            #print(line_str)
-            #print(date)
-            #print(time)
-            #print(vm_name)
-            #print(vm_id)
-            #print(log_message)
-            log_row = LogRow(date, time, vm_name, vm_id, log_message)
-            lob_block = self.log.log_blocks_map.get(vm_id, LogBlock(vm_name,vm_id))
-            lob_block.add_log_rows(log_row);
-            self.log.log_blocks_map[vm_id]= lob_block
+            if (not (
+                    log_message == "ag_userd Updating ad data" or log_message == "ag_userd Start to search for AD groups"
+                    or log_message == "ag_distd updated file /var/opt/appgate/conf/agclient.properties" or
+                    "ag_galed statistics: up 0 packets" in log_message or "status 1 session load" in log_message
+                    or "sessions load" in log_message)):
+                log_row = LogRow(date, time, vm_name, vm_id, log_message)
+                lob_block = self.log.log_blocks_map.get(vm_id, LogBlock(vm_name,vm_id))
+                lob_block.add_log_rows(log_row);
+                self.log.log_blocks_map[vm_id]= lob_block
 
     def print_logs(self):
         for k, v in self.log.log_blocks_map.items():
@@ -63,12 +62,8 @@ class LogService:
         with open('name.txt', 'wb+') as destination:
             for k, v in self.log.log_blocks_map.items():
                 for log_row in v.log_rows:
-                    if(not(log_row.log_message == "ag_userd Updating ad data" or log_row.log_message == "ag_userd Start to search for AD groups"
-                    or log_row.log_message =="ag_distd updated file /var/opt/appgate/conf/agclient.properties" or
-                     "ag_galed statistics: up 0 packets" in log_row.log_message or "status 1 session load" in log_row.log_message
-                           or "sessions load" in log_row.log_message)):
-                        destination.write(" ".join([log_row.date,log_row.time,log_row.vm_name,log_row.vm_id,log_row.log_message]).encode("utf-8"))
-                        destination.write("\n".encode("utf-8"));
+                    destination.write(" ".join([log_row.date,log_row.time,log_row.vm_name,log_row.vm_id,log_row.log_message]).encode("utf-8"))
+                    destination.write("\n".encode("utf-8"));
 
 
 

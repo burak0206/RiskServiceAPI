@@ -91,6 +91,7 @@ def log(request):
         logfile = request.FILES['logfile']
         log_service = LogService();
         log_service.populate_log(logfile)
-        log_service.print_logs()
+        #log_service.print_logs()
+        log_service.handle_uploaded_file()
         response = json.dumps([{'Success': "Risk Values are changed"}])
     return HttpResponse(response, content_type='text/json')

@@ -50,7 +50,6 @@ class LogService:
             lob_block.add_log_rows(log_row);
             self.log.log_blocks_map[vm_id]= lob_block
 
-
     def print_logs(self):
         for k, v in self.log.log_blocks_map.items():
             for log_row in v.log_rows:
@@ -60,7 +59,16 @@ class LogService:
                 print(log_row.vm_id)
                 print(log_row.log_message)
 
-
+    def handle_uploaded_file(self):
+        with open('name.txt', 'wb+') as destination:
+            for k, v in self.log.log_blocks_map.items():
+                for log_row in v.log_rows:
+                    if(not(log_row.log_message == "ag_userd Updating ad data" or log_row.log_message == "ag_userd Start to search for AD groups"
+                    or log_row.log_message =="ag_distd updated file /var/opt/appgate/conf/agclient.properties" or
+                     "ag_galed statistics: up 0 packets" in log_row.log_message or "status 1 session load" in log_row.log_message
+                           or "sessions load" in log_row.log_message)):
+                        destination.write(" ".join([log_row.date,log_row.time,log_row.vm_name,log_row.vm_id,log_row.log_message]).encode("utf-8"))
+                        destination.write("\n".encode("utf-8"));
 
 
 

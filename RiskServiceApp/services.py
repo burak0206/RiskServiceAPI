@@ -3,7 +3,6 @@ import datetime
 from RiskServiceApp.models import LogBlock
 from RiskServiceApp.models import LogRow
 from RiskServiceApp.models import RiskValuesModel
-from RiskServiceApp.models import CachedRiskValuesModel
 
 
 class LogPopulateService:
@@ -11,9 +10,6 @@ class LogPopulateService:
         self.risk_values_model = RiskValuesModel()
 
     def populate_log_into_risk_values_model(self,logfile):
-        self.risk_values_model.has_been_run = True;
-        self.risk_values_model.is_running = True;
-        self.risk_values_model.running_date = datetime.datetime.now();
         for line in logfile:
             line_str = line.decode("utf-8").strip()
             date = line_str.split()[0];
@@ -31,8 +27,6 @@ class LogPopulateService:
                 lob_block = self.risk_values_model.log_blocks_map.get(vm_id, LogBlock(vm_name,vm_id))
                 lob_block.add_log_rows(log_row);
                 self.risk_values_model.log_blocks_map[vm_id]= lob_block
-        self.risk_values_model.update_date = datetime.datetime.now();
-        self.risk_values_model.is_running = False;
 
     def print_logs(self):
         for k, v in self.risk_values_model.log_blocks_map.items():
@@ -54,7 +48,6 @@ class LogPopulateService:
 class GettingRiskValuesService:
     def __init__(self):
         self.risk_values_model = RiskValuesModel()
-        self.cached_risk_values_model = CachedRiskValuesModel()
 
     def handle_uploaded_file(self):
         with open('name2.txt', 'wb+') as destination:
@@ -64,20 +57,6 @@ class GettingRiskValuesService:
                     destination.write("\n".encode("utf-8"));
 
     def is_user_known(self, username):
-        if self.risk_values_model.update_date == self.cached_risk_values_model.update_date:
-            print("cache is available")
-            if username in self.cached_risk_values_model.user_known_map:
-                return self.cached_risk_values_model.user_known_map[username]
-            else:
-                return self.is_this_user_logged_in(username)
-        elif self.risk_values_model.is_running:
-            print("risk values has not created")
-            if username in self.cached_risk_values_model.user_known_map:
-                return self.cached_risk_values_model.user_known_map[username]
-            else:
-                return self.is_this_user_logged_in(username)
-        else:
-            print("risk values has been changed")
             return self.is_this_user_logged_in(username)
 
     def is_this_user_logged_in(self,username):
@@ -85,7 +64,17 @@ class GettingRiskValuesService:
         for k, v in self.risk_values_model.log_blocks_map.items():
             for log_row in v.log_rows:
                 if login_message in log_row.log_message:
-                    self.cached_risk_values_model.user_known_map[username]=True
                     return True;
-        self.cached_risk_values_model.user_known_map[username] = False
+        return False;
+
+    def is_ip_known(self, ip):
+        return self.is_any_user_logged_in_this_ip(ip)
+
+    def is_any_user_logged_in_this_ip(self,ip):
+        connect_message = "connect to port"
+        for k, v in self.risk_values_model.log_blocks_map.items():
+            for log_row in v.log_rows:
+                if connect_message in log_row.log_message:
+                    if log_row.log_message.split()[5] == ip:
+                        return True;
         return False;

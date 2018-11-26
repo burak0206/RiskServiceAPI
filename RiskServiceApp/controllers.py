@@ -43,10 +43,9 @@ def is_ip_known(request):
     if request.method == 'GET':
         try:
             ip = request.GET.get("ip")
-            if ip == "192.168.101.5":
-                response = json.dumps([{'Is IP Known?': True}])
-            else:
-                response = json.dumps([{'Is IP Known?': False}])
+            getting_risk_values_service = GettingRiskValuesService()
+            result = getting_risk_values_service.is_ip_known(ip)
+            response = json.dumps([{'Is IP Known?': result}])
         except:
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
@@ -100,9 +99,5 @@ def log(request):
         logfile = request.FILES['logfile']
         log_populate_service = LogPopulateService();
         log_populate_service.populate_log_into_risk_values_model(logfile)
-        #log_service.print_logs()
-        log_populate_service.handle_uploaded_file()
-        getting_risk_values_service = GettingRiskValuesService()
-        getting_risk_values_service.handle_uploaded_file()
         response = json.dumps([{'Success': "Risk Values are changed"}])
     return HttpResponse(response, content_type='text/json')

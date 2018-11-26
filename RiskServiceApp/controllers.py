@@ -5,12 +5,14 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 import datetime
 
-from RiskServiceApp.services import LogService
-from RiskServiceApp.services import RiskValuesService
+from RiskServiceApp.services import LogPopulateService
+from RiskServiceApp.services import GettingRiskValuesService
+
 
 def index(request):
     response = json.dumps([{}])
     return HttpResponse(response, content_type='text/json')
+
 
 def is_user_known(request):
     if request.method == 'GET':
@@ -24,6 +26,7 @@ def is_user_known(request):
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
 
+
 def is_client_known(request):
     if request.method == 'GET':
         try:
@@ -35,6 +38,7 @@ def is_client_known(request):
         except:
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
+
 
 def is_ip_known(request):
     if request.method == 'GET':
@@ -48,6 +52,7 @@ def is_ip_known(request):
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
 
+
 def is_ip_internal(request):
     if request.method == 'GET':
         try:
@@ -60,6 +65,7 @@ def is_ip_internal(request):
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
 
+
 def get_last_successful_login_date(request):
     if request.method == 'GET':
         try:
@@ -68,6 +74,7 @@ def get_last_successful_login_date(request):
         except:
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
+
 
 def get_last_failed_login_date(request):
     if request.method == 'GET':
@@ -78,6 +85,7 @@ def get_last_failed_login_date(request):
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
 
+
 def get_failed_login_count_lastweek(request):
     if request.method == 'GET':
         try:
@@ -86,15 +94,16 @@ def get_failed_login_count_lastweek(request):
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
 
+
 @csrf_exempt
 def log(request):
     if request.method == 'POST' and request.FILES['logfile']:
         logfile = request.FILES['logfile']
-        log_service = LogService();
-        log_service.populate_log(logfile)
+        log_populate_service = LogPopulateService();
+        log_populate_service.populate_log_into_risk_values_model(logfile)
         #log_service.print_logs()
-        log_service.handle_uploaded_file()
-        risk_values_service = RiskValuesService()
-        risk_values_service.handle_uploaded_file()
+        log_populate_service.handle_uploaded_file()
+        getting_risk_values_service = GettingRiskValuesService()
+        getting_risk_values_service.handle_uploaded_file()
         response = json.dumps([{'Success': "Risk Values are changed"}])
     return HttpResponse(response, content_type='text/json')

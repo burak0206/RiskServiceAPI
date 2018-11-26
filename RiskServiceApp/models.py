@@ -1,3 +1,5 @@
+import datetime
+
 
 class LogRow:
     def __init__(self, date, time, vm_name, vm_id, log_message):
@@ -6,6 +8,7 @@ class LogRow:
         self.vm_name = vm_name
         self.vm_id = vm_id
         self.log_message = log_message
+
 
 class LogBlock:
     def __init__(self,vm_name,vm_id):
@@ -25,4 +28,20 @@ class LogBlock:
         print(self.client_id)
 
 
+class Singleton(type):
+    _instances = {}
 
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(Singleton, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class RiskValuesModel(metaclass=Singleton):
+    def __init__(self):
+        self.log_blocks_map = {}
+        self.has_been_run = False;
+        self.is_running = False;
+        self.running_date = datetime.datetime.now();
+        self.update_date = datetime.datetime.now();
+    pass

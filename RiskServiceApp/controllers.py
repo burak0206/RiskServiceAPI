@@ -6,6 +6,7 @@ import json
 import datetime
 
 from RiskServiceApp.services import LogService
+from RiskServiceApp.services import RiskValuesService
 
 def index(request):
     response = json.dumps([{}])
@@ -93,5 +94,7 @@ def log(request):
         log_service.populate_log(logfile)
         #log_service.print_logs()
         log_service.handle_uploaded_file()
+        risk_values_service = RiskValuesService()
+        risk_values_service.handle_uploaded_file()
         response = json.dumps([{'Success': "Risk Values are changed"}])
     return HttpResponse(response, content_type='text/json')

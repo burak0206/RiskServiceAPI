@@ -28,6 +28,9 @@ class LogService:
         self.log = LogParserAndCalculateRiskValuesService()
 
     def populate_log(self,logfile):
+        self.log.log.has_been_run =  True;
+        self.log.is_running = True;
+        self.log.running_date = datetime.datetime.now();
         for line in logfile:
             line_str = line.decode("utf-8").strip()
             date = line_str.split()[0];
@@ -48,6 +51,9 @@ class LogService:
                 lob_block = self.log.log_blocks_map.get(vm_id, LogBlock(vm_name,vm_id))
                 lob_block.add_log_rows(log_row);
                 self.log.log_blocks_map[vm_id]= lob_block
+        self.update_date = datetime.datetime.now();
+        self.log.is_running = False;
+
 
     def print_logs(self):
         for k, v in self.log.log_blocks_map.items():
@@ -66,4 +72,13 @@ class LogService:
                     destination.write("\n".encode("utf-8"));
 
 
+class RiskValuesService:
+    def __init__(self):
+        self.log = LogParserAndCalculateRiskValuesService()
 
+    def handle_uploaded_file(self):
+        with open('name2.txt', 'wb+') as destination:
+            for k, v in self.log.log_blocks_map.items():
+                for log_row in v.log_rows:
+                    destination.write(" ".join([log_row.date,log_row.time,log_row.vm_name,log_row.vm_id,log_row.log_message]).encode("utf-8"))
+                    destination.write("\n".encode("utf-8"));

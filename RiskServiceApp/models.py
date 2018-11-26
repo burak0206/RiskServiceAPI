@@ -45,3 +45,16 @@ class RiskValuesModel(metaclass=Singleton):
         self.running_date = datetime.datetime.now();
         self.update_date = datetime.datetime.now();
     pass
+
+
+class CachedRiskValuesModel(metaclass=Singleton):
+    def __init__(self):
+        self.user_known_map = {}
+        self.client_known_map = {}
+        self.ip_known_map = {}
+        self.ip_internal_map = {}
+        self.last_successful_login_datetime_map = {}
+        self.last_failed_login_datetime_map = {}
+        self.failed_login_count_last_week = 0
+        self.update_date = datetime.datetime.now();
+    pass

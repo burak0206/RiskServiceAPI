@@ -18,10 +18,9 @@ def is_user_known(request):
     if request.method == 'GET':
         try:
             username = request.GET.get("username")
-            if (username == "UserA"):
-                response = json.dumps([{ 'Is User Known?': True }])
-            else:
-                response = json.dumps([{'Is User Known?': False}])
+            getting_risk_values_service = GettingRiskValuesService()
+            result = getting_risk_values_service.is_user_known(username)
+            response = json.dumps([{ 'Is User Known?': result }])
         except:
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
@@ -31,7 +30,7 @@ def is_client_known(request):
     if request.method == 'GET':
         try:
             clientid = request.GET.get("clientid")
-            if (clientid == "fe80::84c:15f9:f9f5:12c3"):
+            if clientid == "fe80::84c:15f9:f9f5:12c3":
                 response = json.dumps([{ 'Is Client Known?': True }])
             else:
                 response = json.dumps([{'Is Client Known?': False}])
@@ -44,7 +43,7 @@ def is_ip_known(request):
     if request.method == 'GET':
         try:
             ip = request.GET.get("ip")
-            if (ip == "192.168.101.5"):
+            if ip == "192.168.101.5":
                 response = json.dumps([{'Is IP Known?': True}])
             else:
                 response = json.dumps([{'Is IP Known?': False}])
@@ -57,7 +56,7 @@ def is_ip_internal(request):
     if request.method == 'GET':
         try:
             ip = request.GET.get("ip")
-            if (ip == "192.168.101.5"):
+            if ip == "192.168.101.5":
                 response = json.dumps([{'Is IP Internal?': True}])
             else:
                 response = json.dumps([{'Is IP Internal?': False}])

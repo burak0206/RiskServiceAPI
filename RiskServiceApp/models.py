@@ -11,15 +11,12 @@ class LogRow:
 
 
 class LogBlock:
-    def __init__(self,vm_name,vm_id):
+    def __init__(self,vm_name,vm_id,date,time):
         self.vm_name = vm_name
         self.vm_id = vm_id
-        self.user = ""
-        self.ip = ""
-        self.client_id = ""
+        self.date = date
+        self.time = time
         self.log_rows = []
-        self.number_of_success_login = 0;
-        self.number_of_failed_login = 0;
 
     def add_log_rows(self, log_row):
         self.log_rows.append(log_row)
@@ -40,5 +37,8 @@ class Singleton(type):
 class RiskValuesModel(metaclass=Singleton):
     def __init__(self):
         self.log_blocks_map = {}
+        self.cache_is_user_known_map = {}
+        self.cache_is_client_known_map = {}
+        self.cache_is_ip_known_map = {}
     pass
 

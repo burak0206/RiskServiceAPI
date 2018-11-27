@@ -1,4 +1,6 @@
 import datetime
+from datetime import timedelta
+import re
 
 from RiskServiceApp.models import LogBlock
 from RiskServiceApp.models import LogRow
@@ -24,53 +26,43 @@ class LogPopulateService:
                     "ag_galed statistics: up 0 packets" in log_message or "status 1 session load" in log_message
                     or "sessions load" in log_message)):
                 log_row = LogRow(date, time, vm_name, vm_id, log_message)
-                lob_block = self.risk_values_model.log_blocks_map.get(vm_id, LogBlock(vm_name,vm_id))
+                lob_block = self.risk_values_model.log_blocks_map.get(vm_id, LogBlock(vm_name, vm_id, date, time))
                 lob_block.add_log_rows(log_row);
-                self.risk_values_model.log_blocks_map[vm_id]= lob_block
-
-    def print_logs(self):
-        for k, v in self.risk_values_model.log_blocks_map.items():
-            for log_row in v.log_rows:
-                print(log_row.date)
-                print(log_row.time)
-                print(log_row.vm_name)
-                print(log_row.vm_id)
-                print(log_row.log_message)
-
-    def handle_uploaded_file(self):
-        with open('name.txt', 'wb+') as destination:
-            for k, v in self.risk_values_model.log_blocks_map.items():
-                for log_row in v.log_rows:
-                    destination.write(" ".join([log_row.date,log_row.time,log_row.vm_name,log_row.vm_id,log_row.log_message]).encode("utf-8"))
-                    destination.write("\n".encode("utf-8"));
+                self.risk_values_model.log_blocks_map[vm_id] = lob_block
+        self.risk_values_model.cache_is_user_known_map = {}
+        self.risk_values_model.cache_is_client_known_map = {}
+        self.risk_values_model.cache_is_ip_known_map = {}
 
 
 class GettingRiskValuesService:
     def __init__(self):
         self.risk_values_model = RiskValuesModel()
 
-    def handle_uploaded_file(self):
-        with open('name2.txt', 'wb+') as destination:
-            for k, v in self.risk_values_model.log_blocks_map.items():
-                for log_row in v.log_rows:
-                    destination.write(" ".join([log_row.date,log_row.time,log_row.vm_name,log_row.vm_id,log_row.log_message]).encode("utf-8"))
-                    destination.write("\n".encode("utf-8"));
-
     def is_user_known(self, username):
-            return self.is_this_user_logged_in(username)
-
-    def is_this_user_logged_in(self,username):
+        if username in self.risk_values_model.cache_is_user_known_map:
+            return self.risk_values_model.cache_is_user_known_map[username]
         login_message = "login " + username + " from"
         for k, v in self.risk_values_model.log_blocks_map.items():
             for log_row in v.log_rows:
                 if login_message in log_row.log_message:
+                    self.risk_values_model.cache_is_user_known_map[username] = True
                     return True;
+        self.risk_values_model.cache_is_user_known_map[username] = False
+        return False;
+
+    def is_client_known(self, clientid):
+        if clientid in self.risk_values_model.cache_is_client_known_map:
+            return self.risk_values_model.cache_is_client_known_map[clientid]
+        client_message = "sshd Client protocol 2.0; client software version libssh2_1.4.2; AppGate version " + clientid
+        for k, v in self.risk_values_model.log_blocks_map.items():
+            for log_row in v.log_rows:
+                if client_message in log_row.log_message:
+                    self.risk_values_model.cache_is_client_known_map[clientid] = True;
+                    return True;
+        self.risk_values_model.cache_is_client_known_map[clientid] = False;
         return False;
 
     def is_ip_known(self, ip):
-        return self.is_any_user_logged_in_this_ip(ip)
-
-    def is_any_user_logged_in_this_ip(self,ip):
         connect_message = "connect to port"
         for k, v in self.risk_values_model.log_blocks_map.items():
             for log_row in v.log_rows:
@@ -78,3 +70,18 @@ class GettingRiskValuesService:
                     if log_row.log_message.split()[5] == ip:
                         return True;
         return False;
+
+    def is_ip_internal(self, ip):
+        p = re.compile('(^127\.)| (^10\.)|(^172\.1[6-9]\.)|(^172\.2[0-9]\.)|(^172\.3[0-1]\.)|(^192\.168\.)')
+        return p.match(ip) is not None
+
+    def failed_login_count_last_week(self,number_of_weeks):
+        last_week_date_time = datetime.datetime.now() - timedelta(weeks=int(number_of_weeks));
+        for k, v in self.risk_values_model.log_blocks_map.items():
+            date_time_str = v.date[0:4]+"-"+v.date[4:6]+"-"+v.date[6:8]+" "+v.time
+            date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+            if last_week_date_time < date_time_obj:
+                print("burak")
+            else:
+                print("nidal")
+        return 4;

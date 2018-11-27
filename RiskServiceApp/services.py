@@ -76,12 +76,14 @@ class GettingRiskValuesService:
         return p.match(ip) is not None
 
     def failed_login_count_last_week(self,number_of_weeks):
+        count = 0;
         last_week_date_time = datetime.datetime.now() - timedelta(weeks=int(number_of_weeks));
         for k, v in self.risk_values_model.log_blocks_map.items():
             date_time_str = v.date[0:4]+"-"+v.date[4:6]+"-"+v.date[6:8]+" "+v.time
             date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+            failed_message = "sshd Failed"
             if last_week_date_time < date_time_obj:
-                print("burak")
-            else:
-                print("nidal")
-        return 4;
+                for log_row in v.log_rows:
+                    if failed_message in log_row.log_message:
+                        count += 1
+        return count;

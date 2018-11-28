@@ -61,22 +61,32 @@ def is_ip_internal(request):
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
 
-#TODO
+
 def get_last_successful_login_date(request):
     if request.method == 'GET':
         try:
-            date_time = datetime.datetime.now()
-            response = json.dumps([{'datetime': date_time}], cls=DjangoJSONEncoder)
+            username = request.GET.get("username")
+            getting_risk_values_service = GettingRiskValuesService()
+            date_time = getting_risk_values_service.get_last_successful_login_date_by_username(username)
+            if date_time is None:
+                response = json.dumps([{'Error': 'User has not never logged'}])
+            else:
+                response = json.dumps([{'datetime': date_time}], cls=DjangoJSONEncoder)
         except:
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')
 
-#TODO
+
 def get_last_failed_login_date(request):
     if request.method == 'GET':
         try:
-            date_time = datetime.datetime.now()
-            response = json.dumps([{'datetime': date_time}], cls=DjangoJSONEncoder)
+            username = request.GET.get("username")
+            getting_risk_values_service = GettingRiskValuesService()
+            date_time = getting_risk_values_service.get_last_failed_login_date_by_username(username)
+            if date_time is None:
+                response = json.dumps([{'Error': 'There is no that User can not login'}])
+            else:
+                response = json.dumps([{'datetime': date_time}], cls=DjangoJSONEncoder)
         except:
             response = json.dumps([{ 'Error': 'No person with that name'}])
     return HttpResponse(response, content_type='text/json')

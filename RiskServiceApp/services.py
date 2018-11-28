@@ -44,7 +44,7 @@ class GettingRiskValuesService:
         login_message = "login " + username + " from"
         for k, v in self.risk_values_model.log_blocks_map.items():
             for log_row in v.log_rows:
-                if login_message in log_row.log_message:
+                if log_row.log_message.startswith(login_message):
                     self.risk_values_model.cache_is_user_known_map[username] = True
                     return True;
         self.risk_values_model.cache_is_user_known_map[username] = False
@@ -56,7 +56,7 @@ class GettingRiskValuesService:
         client_message = "sshd Client protocol 2.0; client software version libssh2_1.4.2; AppGate version " + clientid
         for k, v in self.risk_values_model.log_blocks_map.items():
             for log_row in v.log_rows:
-                if client_message in log_row.log_message:
+                if log_row.log_message.startswith(client_message):
                     self.risk_values_model.cache_is_client_known_map[clientid] = True;
                     return True;
         self.risk_values_model.cache_is_client_known_map[clientid] = False;
@@ -66,7 +66,7 @@ class GettingRiskValuesService:
         connect_message = "connect to port"
         for k, v in self.risk_values_model.log_blocks_map.items():
             for log_row in v.log_rows:
-                if connect_message in log_row.log_message:
+                if log_row.log_message.startswith(connect_message):
                     if log_row.log_message.split()[5] == ip:
                         return True;
         return False;
@@ -79,11 +79,60 @@ class GettingRiskValuesService:
         count = 0;
         last_week_date_time = datetime.datetime.now() - timedelta(weeks=int(number_of_weeks));
         for k, v in self.risk_values_model.log_blocks_map.items():
-            date_time_str = v.date[0:4]+"-"+v.date[4:6]+"-"+v.date[6:8]+" "+v.time
-            date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
             failed_message = "sshd Failed"
-            if last_week_date_time < date_time_obj:
-                for log_row in v.log_rows:
-                    if failed_message in log_row.log_message:
+            for log_row in v.log_rows:
+                if log_row.log_message.startswith(failed_message):
+                    date_time_str = log_row.date[0:4] + "-" + log_row.date[4:6] + "-" + log_row.date[6:8] + " "
+                    date_time_str = date_time_str + log_row.time
+                    date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+                    if last_week_date_time < date_time_obj:
                         count += 1
         return count;
+
+    def get_last_successful_login_date_by_username(self, username):
+        login_message = "login " + username + " from"
+        log_block = self.risk_values_model.log_blocks_map[list(self.risk_values_model.log_blocks_map.keys())[0]]
+        log_row = log_block.log_rows[0]
+        date_time_str = log_row.date[0:4] + "-" + log_row.date[4:6] + "-" + log_row.date[6:8] + " "
+        date_time_str = date_time_str + log_row.time
+        last_date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+        can_user_login = False;
+        for k, v in self.risk_values_model.log_blocks_map.items():
+            for log_row in v.log_rows:
+                if log_row.log_message.startswith(login_message):
+                    date_time_str = log_row.date[0:4] + "-" + log_row.date[4:6] + "-" + log_row.date[6:8] + " "
+                    date_time_str = date_time_str + log_row.time
+                    date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+                    if last_date_time_obj < date_time_obj:
+                        last_date_time_obj = date_time_obj
+                        can_user_login = True;
+        if can_user_login:
+            return last_date_time_obj
+        else:
+            return None
+
+    def get_last_failed_login_date_by_username(self, username):
+        failed_message = "sshd Failed"
+        log_block = self.risk_values_model.log_blocks_map[list(self.risk_values_model.log_blocks_map.keys())[0]]
+        log_row = log_block.log_rows[0]
+        date_time_str = log_row.date[0:4] + "-" + log_row.date[4:6] + "-" + log_row.date[6:8] + " "
+        date_time_str = date_time_str + log_row.time
+        last_date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+        cannot_user_login = False;
+        for k, v in self.risk_values_model.log_blocks_map.items():
+            for log_row in v.log_rows:
+                if log_row.log_message.startswith(failed_message):
+                    username_in_log_message = log_row.log_message.split()[6];
+                    if username_in_log_message == username:
+                        date_time_str = log_row.date[0:4] + "-" + log_row.date[4:6] + "-" + log_row.date[6:8] + " "
+                        date_time_str = date_time_str + log_row.time
+                        date_time_obj = datetime.datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S')
+                        if last_date_time_obj < date_time_obj:
+                            last_date_time_obj = date_time_obj
+                            cannot_user_login = True;
+        if cannot_user_login:
+            return last_date_time_obj
+        else:
+            return None
+
+

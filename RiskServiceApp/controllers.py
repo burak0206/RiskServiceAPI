@@ -16,6 +16,9 @@ def index(request):
 def is_user_known(request):
     if request.method == 'GET':
         try:
+            if 'username' not in request.GET:
+                response = json.dumps([{'Error': 'username is must'}])
+                return HttpResponse(response, content_type='text/json')
             username = request.GET.get("username")
             getting_risk_values_service = GettingRiskValuesService()
             result = getting_risk_values_service.is_user_known(username)
@@ -28,6 +31,9 @@ def is_user_known(request):
 def is_client_known(request):
     if request.method == 'GET':
         try:
+            if 'clientid' not in request.GET:
+                response = json.dumps([{'Error': 'clientid is must'}])
+                return HttpResponse(response, content_type='text/json')
             clientid = request.GET.get("clientid")
             getting_risk_values_service = GettingRiskValuesService()
             result = getting_risk_values_service.is_client_known(clientid)
@@ -40,6 +46,9 @@ def is_client_known(request):
 def is_ip_known(request):
     if request.method == 'GET':
         try:
+            if 'ip' not in request.GET:
+                response = json.dumps([{'Error': 'ip is must'}])
+                return HttpResponse(response, content_type='text/json')
             ip = request.GET.get("ip")
             getting_risk_values_service = GettingRiskValuesService()
             result = getting_risk_values_service.is_ip_known(ip)
@@ -52,6 +61,9 @@ def is_ip_known(request):
 def is_ip_internal(request):
     if request.method == 'GET':
         try:
+            if 'ip' not in request.GET:
+                response = json.dumps([{'Error': 'ip is must'}])
+                return HttpResponse(response, content_type='text/json')
             ip = request.GET.get("ip")
             getting_risk_values_service = GettingRiskValuesService()
             result = getting_risk_values_service.is_ip_internal(ip)
@@ -118,4 +130,6 @@ def log(request):
         log_populate_service = LogPopulateService();
         log_populate_service.populate_log_into_risk_values_model(logfile)
         response = json.dumps([{'Success': "Risk Values are changed"}])
+    else:
+        response = json.dumps([{'Error': "Log file is must"}])
     return HttpResponse(response, content_type='text/json')

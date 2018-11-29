@@ -21,6 +21,7 @@ urlpatterns = [
     #path('admin/', admin.site.urls),
     path('', controllers.index),
     path('log', controllers.log),
+    path('log/clear', controllers.log_clear),
     path('risk/isuserknown', controllers.is_user_known),
     path('risk/isclientknown', controllers.is_client_known),
     path('risk/isipknown', controllers.is_ip_known),

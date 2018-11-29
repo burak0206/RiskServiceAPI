@@ -11,6 +11,12 @@ class LogPopulateService:
     def __init__(self):
         self.risk_values_model = RiskValuesModel()
 
+    def log_clear(self):
+        self.risk_values_model.log_blocks_map = {}
+        self.risk_values_model.cache_is_user_known_map = {}
+        self.risk_values_model.cache_is_client_known_map = {}
+        self.risk_values_model.cache_is_ip_known_map = {}
+
     def populate_log_into_risk_values_model(self,logfile):
         for line in logfile:
             line_str = line.decode("utf-8").strip()

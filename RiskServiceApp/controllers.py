@@ -133,3 +133,9 @@ def log(request):
     else:
         response = json.dumps([{'Error': "Log file is must"}])
     return HttpResponse(response, content_type='text/json')
+
+
+def log_clear(request):
+    if request.method == 'GET':
+        response = json.dumps([{'Success': "Log Clear"}])
+    return HttpResponse(response, content_type='text/json')

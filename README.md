@@ -111,8 +111,7 @@ class LogBlock:
         print(self.client_id)
 ```
 
-* All log populate into RiskValuesModel class. Log Blocks are kept in a dictionary/map. This class is a singleton. 
-And The class has caches of some requests so the App can respond quickly to some requests.
+* All log populate into RiskValuesModel class. Log Blocks are kept in a dictionary/map of this class. This class is a singleton. And the class has caches of some requests so the App can respond quickly to some requests.
 ```
 class Singleton(type):
     _instances = {}
@@ -135,11 +134,20 @@ class RiskValuesModel(metaclass=Singleton):
 
 Business logic is defined in services.py python file.
 
-* Each log row maps to instance of LogRow class
+* LogPopulateService
+```
+All log populate into Singleton RiskValuesModel by calling a function of LogPopulateService in controllers.py file. 
+```
+
+* GettingRiskValuesService
+```
+Functions of The GettingRiskValuesService return risk values.
+```
 
 ### Backlog
 
-* Cache system can be developed
-* Log requests can be be queued
-* Risk values requests can be queued
+* Cache system can be improved.
+* Log requests can be be queued.
+* Risk values requests can be queued.
+* Models are improved.
 

@@ -17,50 +17,31 @@ http://localhost:8000/risk/isipknown?ip=192.168.101.5
 http://localhost:8000/risk/isipinternal?ip=192.168.101.5
 http://localhost:8000/risk/lastsuccessfullogindate?username=test_rs
 http://localhost:8000/risk/lastfailedlogindate?username=admin
-http://127.0.0.1:8000/risk/failedlogincountlastweek
+http://localhost:8000/risk/failedlogincountlastweek
 ```
 
-### Installing
+### Test Cases
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
+22 test cases are implemented. I used SimpleTestCase which is from django.test.
 
 ```
-Give the example
+Give the example:
+
+class RiskServiceApiTests(SimpleTestCase):
+
+    def test_index_page(self):
+        response = self.client.get('/')
+        self.assertEquals(response.status_code, 200)
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            [{}]
+        )
+     .
+     .
+     .
 ```
 
-And repeat
 
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 

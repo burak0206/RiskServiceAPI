@@ -61,6 +61,27 @@ class RiskServiceApiTests(SimpleTestCase):
      .
 ```
 
+### Controlers, Services and Models
+
+* Controllers
+Requests are handled in controlers.py python file
+22 test cases are implemented. I used SimpleTestCase which is from django.test.
+
+
+```
+Give the example:
+@csrf_exempt
+def log(request):
+    if request.method == 'POST' and request.FILES['logfile']:
+        logfile = request.FILES['logfile']
+        log_populate_service = LogPopulateService();
+        log_populate_service.populate_log_into_risk_values_model(logfile)
+        response = json.dumps([{'Success': "Risk Values are changed"}])
+    else:
+        response = json.dumps([{'Error': "Log file is must"}])
+    return HttpResponse(response, content_type='text/json')
+```
+
 
 
 

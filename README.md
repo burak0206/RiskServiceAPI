@@ -1,17 +1,23 @@
-# Project Title
+# Risk Service API
 
-One Paragraph of project description goes here
+In this report, the technologies, endpoints, test cases, classes, functions and backlogs will be explained.
 
-## Getting Started
+### The Technologies
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+Python 3.6 and Django 2.1.3 are used to build the project.
 
-### Prerequisites
-
-What things you need to install the software and how to install them
+### Endpoints
 
 ```
-Give examples
+http://localhost:8000/log
+http://localhost:8000/log/clear
+http://localhost:8000/risk/isuserknown?username=UserA
+http://localhost:8000/risk/isclientknown?clientid=fe80::84c:15f9:f9f5:12c3
+http://localhost:8000/risk/isipknown?ip=192.168.101.5
+http://localhost:8000/risk/isipinternal?ip=192.168.101.5
+http://localhost:8000/risk/lastsuccessfullogindate?username=test_rs
+http://localhost:8000/risk/lastfailedlogindate?username=admin
+http://127.0.0.1:8000/risk/failedlogincountlastweek
 ```
 
 ### Installing

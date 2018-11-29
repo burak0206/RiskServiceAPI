@@ -61,10 +61,9 @@ class RiskServiceApiTests(SimpleTestCase):
      .
 ```
 
-### Controlers
+### Controllers
 
-Requests are handled in controlers.py python file.
-
+Requests are handled in controllers.py python file.
 
 ```
 Give the example:
@@ -132,8 +131,11 @@ class RiskValuesModel(metaclass=Singleton):
     pass
 ```
 
+### Services
 
+Business logic is defined in services.py python file.
 
+* Each log row maps to instance of LogRow class
 
 ### Backlog
 

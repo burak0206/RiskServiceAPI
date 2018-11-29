@@ -2,7 +2,6 @@ from django.http import HttpResponse
 from django.core.serializers.json import DjangoJSONEncoder
 from django.views.decorators.csrf import csrf_exempt
 
-import datetime
 import json
 
 from RiskServiceApp.services import LogPopulateService
@@ -22,7 +21,7 @@ def is_user_known(request):
             result = getting_risk_values_service.is_user_known(username)
             response = json.dumps([{ 'Is User Known?': result }])
         except:
-            response = json.dumps([{ 'Error': 'No person with that name'}])
+            response = json.dumps([{ 'Error': 'Log has not been populated'}])
     return HttpResponse(response, content_type='text/json')
 
 
@@ -34,7 +33,7 @@ def is_client_known(request):
             result = getting_risk_values_service.is_client_known(clientid)
             response = json.dumps([{'Is ClientID Known?': result}])
         except:
-            response = json.dumps([{ 'Error': 'No person with that name'}])
+            response = json.dumps([{ 'Error': 'Log has not been populated'}])
     return HttpResponse(response, content_type='text/json')
 
 
@@ -46,7 +45,7 @@ def is_ip_known(request):
             result = getting_risk_values_service.is_ip_known(ip)
             response = json.dumps([{'Is IP Known?': result}])
         except:
-            response = json.dumps([{ 'Error': 'No person with that name'}])
+            response = json.dumps([{ 'Error': 'Log has not been populated'}])
     return HttpResponse(response, content_type='text/json')
 
 
@@ -58,13 +57,16 @@ def is_ip_internal(request):
             result = getting_risk_values_service.is_ip_internal(ip)
             response = json.dumps([{'Is IP Internal?': result}])
         except:
-            response = json.dumps([{ 'Error': 'No person with that name'}])
+            response = json.dumps([{ 'Error': 'Log has not been populated'}])
     return HttpResponse(response, content_type='text/json')
 
 
 def get_last_successful_login_date(request):
     if request.method == 'GET':
         try:
+            if 'username' not in request.GET:
+                response = json.dumps([{'Error': 'username is must'}])
+                return HttpResponse(response, content_type='text/json')
             username = request.GET.get("username")
             getting_risk_values_service = GettingRiskValuesService()
             date_time = getting_risk_values_service.get_last_successful_login_date_by_username(username)
@@ -73,13 +75,16 @@ def get_last_successful_login_date(request):
             else:
                 response = json.dumps([{'datetime': date_time}], cls=DjangoJSONEncoder)
         except:
-            response = json.dumps([{ 'Error': 'No person with that name'}])
+            response = json.dumps([{ 'Error': 'Log has not been populated'}])
     return HttpResponse(response, content_type='text/json')
 
 
 def get_last_failed_login_date(request):
     if request.method == 'GET':
         try:
+            if 'username' not in request.GET:
+                response = json.dumps([{'Error': 'username is must'}])
+                return HttpResponse(response, content_type='text/json')
             username = request.GET.get("username")
             getting_risk_values_service = GettingRiskValuesService()
             date_time = getting_risk_values_service.get_last_failed_login_date_by_username(username)
@@ -88,7 +93,7 @@ def get_last_failed_login_date(request):
             else:
                 response = json.dumps([{'datetime': date_time}], cls=DjangoJSONEncoder)
         except:
-            response = json.dumps([{ 'Error': 'No person with that name'}])
+            response = json.dumps([{ 'Error': 'Log has not been populated'}])
     return HttpResponse(response, content_type='text/json')
 
 
@@ -102,7 +107,7 @@ def get_failed_login_count_lastweek(request):
             count = getting_risk_values_service.failed_login_count_last_week(number_of_weeks)
             response = json.dumps([{ 'count': count}])
         except:
-            response = json.dumps([{ 'Error': 'No person with that name'}])
+            response = json.dumps([{ 'Error': 'Log has not been populated'}])
     return HttpResponse(response, content_type='text/json')
 
 

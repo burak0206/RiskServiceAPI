@@ -36,6 +36,26 @@ class RiskServiceApiTests(SimpleTestCase):
             str(response.content, encoding='utf8'),
             [{}]
         )
+        
+    def test_populate_log(self):
+        c = Client()
+        with open('Python Programming Task - Sample Logs.txt') as fp:
+            response = c.post('/log', {'logfile': fp})
+        self.assertEquals(response.status_code, 200)
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            [{'Success': 'Risk Values are changed'}]
+        )
+
+    def test_is_user_know_when_username_not_exist(self):
+        c = Client()
+        response = c.get('/risk/isuserknown')
+        self.assertEquals(response.status_code, 200)
+        self.assertEqual(response.content.decode("utf-8"), '[{"Error": "username is must"}]')
+        self.assertJSONEqual(
+            str(response.content, encoding='utf8'),
+            [{"Error": "username is must"}]
+        )    
      .
      .
      .

@@ -61,9 +61,8 @@ class RiskServiceApiTests(SimpleTestCase):
      .
 ```
 
-### Controlers, Services and Models
+### Controlers
 
-* Controllers
 Requests are handled in controlers.py python file.
 
 
@@ -81,7 +80,8 @@ def log(request):
     return HttpResponse(response, content_type='text/json')
 ```
 
-* Models
+### Models
+
 Models are defined in models.py python file.
 
 * Each log row maps to instance of LogRow class 

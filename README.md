@@ -4,7 +4,8 @@ In this report, the technologies, endpoints, test cases, classes, functions and 
 
 ### The Technologies
 
-Python 3.6 and Django 2.1.3 are used to build the project.
+Python 3.6 and Django 2.1.3 are used to build the project. And I deployed heroku.
+You can access the address: https://riskservice.herokuapp.com
 
 ### Endpoints
 
